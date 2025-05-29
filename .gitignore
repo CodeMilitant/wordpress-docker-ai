@@ -1,0 +1,11 @@
+# Node modules, editor settings, OS files
+node_modules/
+.vscode/
+.DS_Store
+
+# Docker build artifacts
+**/*.tar
+**/*.log
+
+# Env files
+.env

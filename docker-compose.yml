@@ -1,0 +1,38 @@
+# docker-compose.yml
+version: '3.8'
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: wordpress
+      POSTGRES_USER: wp_user
+      POSTGRES_PASSWORD: wp_pass
+    # Tune for 8-core parallelism:
+    command: >
+      postgres 
+      -c max_parallel_workers=8
+      -c max_parallel_workers_per_gather=4
+      -c max_worker_processes=8
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  wordpress:
+    build: .
+    depends_on:
+      - db
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db:5432
+      WORDPRESS_DB_USER: wp_user
+      WORDPRESS_DB_PASSWORD: wp_pass
+      WORDPRESS_DB_NAME: wordpress
+      # For ChatGPT integration—provide your OpenAI API key here:
+      OPENAI_API_KEY: "${OPENAI_API_KEY}"
+    volumes:
+      - wp_data:/var/www/html
+    restart: always
+
+volumes:
+  db_data:
+  wp_data:
